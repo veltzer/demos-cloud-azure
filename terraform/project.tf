@@ -1,18 +1,9 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.75.0"
-    }
-  }
-  required_version = ">= 1.3.0"
+provider "azurerm" {
+	features {}
+	subscription_id = "3f79a68d-cf0d-4291-a31f-185897f7fda1"
 }
 
-provider "azurerm" {
-  features {}
-  # Uncomment these lines to use service principal authentication
-  # subscription_id = "your-subscription-id"
-  # client_id       = "your-client-id"
-  # client_secret   = "your-client-secret"
-  # tenant_id       = "your-tenant-id"
+resource "azurerm_resource_group" "mark_rg_id" {
+	name     = "mark_rg_name"
+	location = "East US"
 }
