@@ -1,22 +1,20 @@
 provider "azurerm" {
 	features {}
-	subscription_id = "3f79a68d-cf0d-4291-a31f-185897f7fda1"
 }
 
 resource "azurerm_resource_group" "mark_rg_id" {
-	name     = "mark_rg_name"
+	name = "mark_rg_name"
 	location = "East US"
 }
 
 resource "azurerm_virtual_network" "mark_vn_id" {
-  name                = "mark_vn_name"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.mark_rg_id.location
-  resource_group_name = azurerm_resource_group.mark_rg_id.name
-  
-  tags = {
-    environment = "Production"
-  }
+	name                = "mark_vn_name"
+	address_space       = ["10.0.0.0/16"]
+	location            = azurerm_resource_group.mark_rg_id.location
+	resource_group_name = azurerm_resource_group.mark_rg_id.name
+	tags = {
+		environment = "Production"
+	}
 }
 
 resource "azurerm_subnet" "mark_subnet_id" {

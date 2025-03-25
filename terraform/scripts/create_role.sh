@@ -1,0 +1,1 @@
+az ad sp create-for-rbac --name "TerraformServicePrincipal" --role "Contributor" --scopes "/subscriptions/3f79a68d-cf0d-4291-a31f-185897f7fda1" --query "{ client_id: appId, client_secret: password, tenant_id: tenant }"
