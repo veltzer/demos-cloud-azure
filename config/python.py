@@ -1,14 +1,6 @@
-from typing import List
+""" python deps for this project """
 
-
-dev_requires: List[str] = [
-    "pypitools",
-    "black",
-]
-config_requires: List[str] = [
-    "pyclassifiers",
-]
-install_requires: List[str] = [
+install_requires: list[str] = [
     "azure-identity",
     "azure-mgmt-resource",
     "azure-mgmt-compute",
@@ -16,20 +8,16 @@ install_requires: List[str] = [
     "azure-mgmt-storage",
     "azure-mgmt-web",
 ]
-build_requires: List[str] = [
-    "pymakehelper",
+build_requires: list[str] = [
     "pydmt",
-]
-test_requires: List[str] = [
+    "pymakehelper",
+
     "pylint",
     "pytest",
     "pytest-cov",
-    "flake8",
-    "pyflakes",
-    "pycodestyle",
     "mypy",
     # types
     "types-termcolor",
     "types-PyYAML",
 ]
-requires = config_requires + install_requires + build_requires + test_requires
+requires = install_requires + build_requires
