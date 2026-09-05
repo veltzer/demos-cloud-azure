@@ -6,3 +6,14 @@ src_dirs = ["."]
 # lint the GitHub Actions workflow files with actionlint
 [processor.actionlint]
 src_dirs = [".github/workflows"]
+
+# ─── markdown ────────────────────────────────────────────────────────────────
+
+[processor.rumdl]
+src_dirs = ["exercises/setting_up_virtual_machine"]
+src_files = ["README.md"]
+
+# ─── shell ───────────────────────────────────────────────────────────────────
+
+[processor.shellcheck]
+src_dirs = ["exercises/create_repo_and_push_code", "scripts", "terraform/scripts"]

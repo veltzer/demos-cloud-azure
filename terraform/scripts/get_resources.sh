@@ -12,6 +12,6 @@ aws batch describe-job-definitions --status ACTIVE
 aws batch describe-compute-environments
 
 # aws efs describe-file-systems --tag-filters Key="$KEY",Values="$VALUE"
-aws efs describe-file-systems | jq '.FileSystems[] | select(.Tags[] | .Key == "$KEY" and .Value == "$VALUE")'
-aws efs describe-file-systems --query 'FileSystems[?Tags[?Key=="$KEY" && Value=="$VALUE"]]'
+aws efs describe-file-systems | jq ".FileSystems[] | select(.Tags[] | .Key == \"${KEY}\" and .Value == \"${VALUE}\")"
+aws efs describe-file-systems --query "FileSystems[?Tags[?Key=='${KEY}' && Value=='${VALUE}']]"
 aws iam list-roles | grep trainpipe
