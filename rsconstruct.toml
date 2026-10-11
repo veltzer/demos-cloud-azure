@@ -19,5 +19,5 @@ src_files = ["README.md"]
 
 # ─── shell ───────────────────────────────────────────────────────────────────
 
-[processor.checker.shellcheck]
+[processor.checker.ishellcheck]
 src_dirs = ["exercises/create_repo_and_push_code", "scripts", "terraform/scripts"]
