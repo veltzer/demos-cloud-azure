@@ -11,11 +11,13 @@
 
 ### 1. Set Up SSH on Windows
 1. Open PowerShell as Administrator and check if OpenSSH is installed:
+
 ```powershell
 Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
 ```
 
 1. If not installed, install OpenSSH:
+
 ```powershell
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 ```
@@ -23,12 +25,14 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 1. Generate SSH key (choose one method):
 
    Using PowerShell:
+
    ```powershell
    ssh-keygen -t rsa -b 4096
    # Keys will be saved to C:\Users\YourUsername\.ssh\
    ```
 
    Using Git Bash:
+
    ```bash
    ssh-keygen -t rsa -b 4096
    # Keys will be saved to C:/Users/YourUsername/.ssh/
@@ -110,6 +114,7 @@ ssh -i ~/.ssh/id_rsa username@public-ip-address
 
 1. SSH key permissions too open:
    In PowerShell:
+
    ```powershell
    # Check current permissions
    Get-Acl ~\.ssh\id_rsa
@@ -134,6 +139,7 @@ Test-NetConnection -ComputerName public-ip-address -Port 22
 ## File Transfer from Windows to Linux VM
 
 1. Using SCP in PowerShell:
+
 ```powershell
 scp C:\path\to\local\file username@public-ip-address:/home/username/
 ```
@@ -144,6 +150,7 @@ scp C:\path\to\local\file username@public-ip-address:/home/username/
     - Drag and drop files between Windows and Linux
 
 ### 9. Basic Linux Commands for Windows Users
+
 ```bash
 # List files (like 'dir' in Windows)
 ls
