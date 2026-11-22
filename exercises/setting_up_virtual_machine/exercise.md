@@ -1,6 +1,7 @@
 # Setting Up a Linux Virtual Machine on Azure from Windows
 
 ## Prerequisites
+
 - An active Azure subscription
 - A Windows computer
 - Web browser
@@ -10,6 +11,7 @@
 ## Steps
 
 ### 1. Set Up SSH on Windows
+
 1. Open PowerShell as Administrator and check if OpenSSH is installed:
 
 ```powershell
@@ -39,10 +41,12 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
    ```
 
 ### Sign into Azure Portal
+
 1. Navigate to portal.azure.com in your browser
 1. Log in with your Azure credentials
 
 ### Create a Resource Group
+
 1. Click "Resource Groups" in the left sidebar
 1. Click "+ Create" at the top
 1. Fill in the required fields:
@@ -52,6 +56,7 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 1. Click "Review + Create" then "Create"
 
 ### 4. Create the Linux Virtual Machine
+
 1. Click "+ Create a resource" in the left sidebar
 1. Search for and select "Virtual Machine"
 1. Configure the basic settings:
@@ -78,6 +83,7 @@ Get-Content "$env:USERPROFILE\.ssh\id_rsa.pub"
     - Public inbound ports: Allow SSH (22)
 
 ### Review and Create
+
 1. Review your configuration
 1. Check the estimated cost
 1. Click "Create"
@@ -86,6 +92,7 @@ Get-Content "$env:USERPROFILE\.ssh\id_rsa.pub"
 ### Connect to Your Linux VM from Windows
 
 #### Using PowerShell
+
 1. Get your VM's public IP from Azure portal:
     - Go to your VM resource
     - Copy the public IP address from the overview page
@@ -98,11 +105,13 @@ ssh username@public-ip-address
 ```
 
 #### Using Windows Terminal
+
 1. Open Windows Terminal
 1. Start a new PowerShell tab
 1. Use the same SSH command as above
 
 #### Using Git Bash
+
 1. Open Git Bash
 1. Connect using:
 
