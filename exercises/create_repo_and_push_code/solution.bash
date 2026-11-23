@@ -10,7 +10,7 @@ export PROJECT="training"
 # code
 az devops configure --defaults organization="https://dev.azure.com/${ORGANIZATION}" project="${PROJECT}"
 EXISTING_REPO=$(az repos list --query "[?name=='${REPO_NAME}'].name" -o tsv)
-if [ -z "${EXISTING_REPO}" ]
+if [[ -z "${EXISTING_REPO}" ]]
 then
 	echo "Creating repository ${REPO_NAME}"
 	az repos create --name "${REPO_NAME}" > /dev/null
