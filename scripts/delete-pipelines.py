@@ -3,11 +3,12 @@
 Script to delete all pipelines and their runs in an Azure DevOps project using the Azure CLI.
 """
 
-import subprocess
-import json
 import argparse
+import json
+import subprocess
 import sys
 import time
+
 
 def ensure_devops_extension():
     """Ensure Azure DevOps CLI extension is installed."""
@@ -17,12 +18,12 @@ def ensure_devops_extension():
             ['az', 'extension', 'list', '--query', "[?name=='azure-devops']"],
             capture_output=True, text=True, check=True
         )
-        
+
         if '[]' in result.stdout:
             print("Azure DevOps CLI extension not found. Installing...")
             install_result = subprocess.run(
                 ['az', 'extension', 'add', '--name', 'azure-devops'],
-                capture_output=True, text=True
+                capture_output=True, text=True, check=False
             )
             if install_result.returncode != 0:
                 print(f"Failed to install Azure DevOps extension: {install_result.stderr}")
@@ -39,7 +40,7 @@ def configure_devops_defaults(organization):
     """Configure Azure DevOps CLI defaults."""
     try:
         print(f"Setting default organization to https://dev.azure.com/{organization}/")
-        result = subprocess.run(
+        subprocess.run(
             ['az', 'devops', 'configure', '--defaults', f'organization=https://dev.azure.com/{organization}/'],
             capture_output=True, text=True, check=True
         )
@@ -57,9 +58,8 @@ def list_pipelines(project):
             ['az', 'pipelines', 'list', '--project', project, '--output', 'json'],
             capture_output=True, text=True, check=True
         )
-        
-        pipelines = json.loads(result.stdout)
-        return pipelines
+
+        return json.loads(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Error listing pipelines: {e}")
         print(f"Error output: {e.stderr}")
@@ -69,13 +69,12 @@ def list_pipeline_runs(pipeline_id, project):
     """List all runs for a specific pipeline."""
     try:
         result = subprocess.run(
-            ['az', 'pipelines', 'runs', 'list', '--pipeline-id', str(pipeline_id), 
+            ['az', 'pipelines', 'runs', 'list', '--pipeline-id', str(pipeline_id),
              '--project', project, '--output', 'json'],
             capture_output=True, text=True, check=True
         )
-        
-        runs = json.loads(result.stdout)
-        return runs
+
+        return json.loads(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Error listing pipeline runs: {e}")
         print(f"Error output: {e.stderr}")
@@ -84,25 +83,17 @@ def list_pipeline_runs(pipeline_id, project):
 def delete_pipeline_run(run_id, project):
     """Delete a specific pipeline run by ID."""
     try:
-        # Check the available commands in az pipelines runs
-        help_result = subprocess.run(
-            ['az', 'pipelines', 'runs', '--help'],
-            capture_output=True, text=True
-        )
-        
-        # The correct command is 'az pipelines run cancel'
         result = subprocess.run(
-            ['az', 'pipelines', 'runs', 'cancel', '--id', str(run_id), 
+            ['az', 'pipelines', 'runs', 'cancel', '--id', str(run_id),
              '--project', project, '--yes'],
-            capture_output=True, text=True
+            capture_output=True, text=True, check=False
         )
-        
+
         if result.returncode == 0:
             return True
-        else:
-            print(f"Error output: {result.stderr}")
-            return False
-    except Exception as e:
+        print(f"Error output: {result.stderr}")
+        return False
+    except OSError as e:
         print(f"Exception during pipeline run cancellation: {e}")
         return False
 
@@ -110,17 +101,16 @@ def delete_pipeline(pipeline_id, project):
     """Delete a specific pipeline by ID."""
     try:
         result = subprocess.run(
-            ['az', 'pipelines', 'delete', '--id', str(pipeline_id), 
+            ['az', 'pipelines', 'delete', '--id', str(pipeline_id),
              '--project', project, '--yes'],
-            capture_output=True, text=True
+            capture_output=True, text=True, check=False
         )
-        
+
         if result.returncode == 0:
             return True
-        else:
-            print(f"Error output: {result.stderr}")
-            return False
-    except Exception as e:
+        print(f"Error output: {result.stderr}")
+        return False
+    except OSError as e:
         print(f"Exception during pipeline deletion: {e}")
         return False
 
@@ -131,66 +121,66 @@ def main():
     parser.add_argument("--confirm", action="store_true", help="Skip confirmation prompt and delete all pipelines")
     parser.add_argument("--exclude", "-e", nargs="+", help="List of pipeline names to exclude from deletion")
     parser.add_argument("--runs-only", action="store_true", help="Delete only pipeline runs, keep the pipelines")
-    
+
     args = parser.parse_args()
-    
+
     # Ensure Azure DevOps CLI extension is installed
     ensure_devops_extension()
-    
+
     # Configure default organization
     configure_devops_defaults(args.organization)
-    
+
     # Get list of pipelines
     pipelines = list_pipelines(args.project)
-    
+
     if not pipelines:
         print("No pipelines found in the project.")
         return
-    
+
     exclude_list = args.exclude or []
     pipelines_to_process = [pipeline for pipeline in pipelines if pipeline["name"] not in exclude_list]
     excluded_pipelines = [pipeline for pipeline in pipelines if pipeline["name"] in exclude_list]
-    
+
     print(f"Found {len(pipelines)} pipelines in the project.")
     print(f"{len(pipelines_to_process)} will be processed.")
-    
+
     if excluded_pipelines:
         print("Excluded pipelines:")
         for pipeline in excluded_pipelines:
             print(f"- {pipeline['name']}")
-    
+
     if not pipelines_to_process:
         print("No pipelines to process after applying exclusions.")
         return
-    
+
     print("\nPipelines to process:")
     for pipeline in pipelines_to_process:
         print(f"- {pipeline['name']} (ID: {pipeline['id']})")
-    
+
     action_desc = "cancel in-progress pipeline runs" if args.runs_only else "cancel any in-progress pipeline runs and delete the pipelines themselves"
-    
+
     # Confirm deletion
     if not args.confirm:
         confirm = input(f"\nAre you sure you want to {action_desc}? This action cannot be undone. (y/N): ")
         if confirm.lower() != 'y':
             print("Operation cancelled.")
             return
-    
+
     # Process pipelines
     print("\nProcessing pipelines...")
     pipeline_success_count = 0
     run_success_count = 0
     total_runs = 0
-    
+
     for pipeline in pipelines_to_process:
         print(f"\nProcessing pipeline: {pipeline['name']} (ID: {pipeline['id']})")
-        
+
         # Get and cancel all runs for this pipeline
         runs = list_pipeline_runs(pipeline['id'], args.project)
         if runs:
             print(f"  Found {len(runs)} run(s) for this pipeline.")
             total_runs += len(runs)
-            
+
             for run in runs:
                 # Only try to cancel runs that are in progress
                 if run.get('state') in ['inProgress', 'notStarted', 'queued']:
@@ -206,7 +196,7 @@ def main():
                     # Already completed runs don't need to be canceled
         else:
             print("  No runs found for this pipeline.")
-        
+
         # Delete the pipeline itself if not in runs-only mode
         if not args.runs_only:
             print(f"  Deleting pipeline {pipeline['name']}...", end="", flush=True)
@@ -216,7 +206,7 @@ def main():
             else:
                 print(" Failed")
             time.sleep(0.5)  # Small delay to avoid rate limiting
-    
+
     print("\nSummary:")
     print(f"- Canceled {run_success_count} in-progress pipeline runs out of {total_runs} total runs")
     if not args.runs_only:
