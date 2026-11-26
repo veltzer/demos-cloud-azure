@@ -47,3 +47,8 @@ src_files = ["README.md"]
 
 [processor.checker.ishellcheck]
 src_dirs = ["exercises/create_repo_and_push_code", "scripts", "terraform/scripts"]
+
+# every lint suppression names a rule and says why (see the fleet's CLAUDE.md)
+[processor.checker.suppressions]
+src_dirs = [".github", "config", "exercises/create_repo_and_push_code", "exercises/setting_up_virtual_machine", "scripts", "terraform/scripts"]
+src_files = [".yamllint.yaml", "README.md"]
