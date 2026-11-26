@@ -35,7 +35,7 @@ def get_subscriptions(credential):
     return list(subscription_client.subscriptions.list())
 
 
-def delete_resource_groups(credential, subscription_id, dry_run=True):
+def delete_resource_groups(credential, subscription_id, *, dry_run=True):
     """Delete all resource groups in a subscription."""
     resource_client = ResourceManagementClient(credential, subscription_id)
 
@@ -126,7 +126,7 @@ def main():
                     print(f"Skipping subscription {sub_id}")
                     continue
 
-            delete_resource_groups(credential, sub_id, args.dry_run)
+            delete_resource_groups(credential, sub_id, dry_run=args.dry_run)
 
         print("\nResource cleanup complete!")
         if args.dry_run:
