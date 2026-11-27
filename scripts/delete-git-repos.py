@@ -11,7 +11,7 @@ import sys
 import time
 
 
-def ensure_devops_extension():
+def ensure_devops_extension() -> None:
     """Ensure Azure DevOps CLI extension is installed."""
     try:
         # Check if extension is installed
@@ -37,7 +37,7 @@ def ensure_devops_extension():
         print(f"Error checking Azure CLI extensions: {e}")
         sys.exit(1)
 
-def configure_devops_defaults(organization):
+def configure_devops_defaults(organization: str) -> None:
     """Configure Azure DevOps CLI defaults."""
     try:
         print(f"Setting default organization to https://dev.azure.com/{organization}/")
@@ -51,7 +51,7 @@ def configure_devops_defaults(organization):
         print(f"Error output: {e.stderr}")
         sys.exit(1)
 
-def list_repositories(project):
+def list_repositories(project: str):
     """List all Git repositories in the specified project using Azure CLI."""
     try:
         print(f"Fetching repositories from project '{project}'...")
@@ -66,7 +66,7 @@ def list_repositories(project):
         print(f"Error output: {e.stderr}")
         sys.exit(1)
 
-def delete_repository(repo_id, project):
+def delete_repository(repo_id: str, project: str) -> bool:
     """Delete a specific Git repository by ID using Azure CLI."""
     try:
         result = subprocess.run(
@@ -83,7 +83,7 @@ def delete_repository(repo_id, project):
     else:
         return False
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Delete all Git repositories in an Azure DevOps project using Azure CLI")
     parser.add_argument("--organization", "-o", required=True, help="Azure DevOps organization name")
     parser.add_argument("--project", "-p", required=True, help="Azure DevOps project name")

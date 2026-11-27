@@ -11,7 +11,7 @@ import time
 from typing import Any
 
 
-def ensure_devops_extension():
+def ensure_devops_extension() -> None:
     """Ensure Azure DevOps CLI extension is installed."""
     try:
         # Check if extension is installed
@@ -37,7 +37,7 @@ def ensure_devops_extension():
         print(f"Error checking Azure CLI extensions: {e}")
         sys.exit(1)
 
-def configure_devops_defaults(organization):
+def configure_devops_defaults(organization: str) -> None:
     """Configure Azure DevOps CLI defaults."""
     try:
         print(f"Setting default organization to https://dev.azure.com/{organization}/")
@@ -51,7 +51,7 @@ def configure_devops_defaults(organization):
         print(f"Error output: {e.stderr}")
         sys.exit(1)
 
-def list_pipelines(project):
+def list_pipelines(project: str):
     """List all pipelines in the specified project using Azure CLI."""
     try:
         print(f"Fetching pipelines from project '{project}'...")
@@ -66,7 +66,7 @@ def list_pipelines(project):
         print(f"Error output: {e.stderr}")
         sys.exit(1)
 
-def list_pipeline_runs(pipeline_id, project) -> list[dict[str, Any]]:
+def list_pipeline_runs(pipeline_id: int, project: str) -> list[dict[str, Any]]:
     """List all runs for a specific pipeline."""
     try:
         result = subprocess.run(
@@ -81,7 +81,7 @@ def list_pipeline_runs(pipeline_id, project) -> list[dict[str, Any]]:
     runs: list[dict[str, Any]] = json.loads(result.stdout)
     return runs
 
-def delete_pipeline_run(run_id, project):
+def delete_pipeline_run(run_id: int, project: str) -> bool:
     """Delete a specific pipeline run by ID."""
     try:
         result = subprocess.run(
@@ -99,7 +99,7 @@ def delete_pipeline_run(run_id, project):
     else:
         return False
 
-def delete_pipeline(pipeline_id, project):
+def delete_pipeline(pipeline_id: int, project: str) -> bool:
     """Delete a specific pipeline by ID."""
     try:
         result = subprocess.run(
@@ -117,7 +117,7 @@ def delete_pipeline(pipeline_id, project):
     else:
         return False
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Delete all pipelines and their runs in an Azure DevOps project")
     parser.add_argument("--organization", "-o", required=True, help="Azure DevOps organization name")
     parser.add_argument("--project", "-p", required=True, help="Azure DevOps project name")

@@ -19,11 +19,15 @@ import argparse
 import datetime as dt
 import sys
 import time
+from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.identity import AzureCliCredential, DefaultAzureCredential
 from azure.mgmt.resource.resources import ResourceManagementClient
 from azure.mgmt.resource.subscriptions import SubscriptionClient
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 def get_credential():
@@ -37,13 +41,13 @@ def get_credential():
         return DefaultAzureCredential()
 
 
-def get_subscriptions(credential):
+def get_subscriptions(credential: TokenCredential):
     """Get all available subscriptions."""
     subscription_client = SubscriptionClient(credential)
     return list(subscription_client.subscriptions.list())
 
 
-def delete_resource_groups(credential, subscription_id, *, dry_run=True, skip_confirmation=False):
+def delete_resource_groups(credential: TokenCredential, subscription_id: str, *, dry_run: bool = True, skip_confirmation: bool = False) -> None:
     """Delete all resource groups in a subscription."""
     resource_client = ResourceManagementClient(credential, subscription_id)
 
@@ -88,7 +92,7 @@ def delete_resource_groups(credential, subscription_id, *, dry_run=True, skip_co
             print(f"Error deleting resource group {group_name}: {e!s}")
 
 
-def main():
+def main() -> int | None:
     parser = argparse.ArgumentParser(description='Azure Resource Cleanup Tool')
     parser.add_argument('--dry-run', action='store_true', help='Run in dry-run mode (no resources will be deleted)')
     parser.add_argument('--subscription', type=str, help='Specific subscription ID to clean (default: all subscriptions)')
@@ -148,6 +152,9 @@ def main():
         for subscription in subscriptions:
             sub_id = subscription.subscription_id
             sub_name = subscription.display_name
+            if sub_id is None:
+                print(f"Skipping subscription {sub_name}: it has no id")
+                continue
             print(f"\nProcessing subscription: {sub_name} ({sub_id})")
 
             if not args.dry_run and not args.skip_confirmation:
