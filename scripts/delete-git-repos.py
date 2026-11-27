@@ -77,9 +77,10 @@ def delete_repository(repo_id, project):
         if result.returncode == 0:
             return True
         print(f"Error output: {result.stderr}")
-        return False
     except OSError as e:
         print(f"Exception during repository deletion: {e}")
+        return False
+    else:
         return False
 
 def main():

@@ -77,9 +77,10 @@ def delete_variable_group(group_id, project):
         if result.returncode == 0:
             return True
         print(f"Error output: {result.stderr}")
-        return False
     except OSError as e:
         print(f"Exception during variable group deletion: {e}")
+        return False
+    else:
         return False
 
 def main():

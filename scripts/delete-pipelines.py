@@ -92,9 +92,10 @@ def delete_pipeline_run(run_id, project):
         if result.returncode == 0:
             return True
         print(f"Error output: {result.stderr}")
-        return False
     except OSError as e:
         print(f"Exception during pipeline run cancellation: {e}")
+        return False
+    else:
         return False
 
 def delete_pipeline(pipeline_id, project):
@@ -109,9 +110,10 @@ def delete_pipeline(pipeline_id, project):
         if result.returncode == 0:
             return True
         print(f"Error output: {result.stderr}")
-        return False
     except OSError as e:
         print(f"Exception during pipeline deletion: {e}")
+        return False
+    else:
         return False
 
 def main():
