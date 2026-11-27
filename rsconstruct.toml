@@ -53,3 +53,12 @@ src_dirs = ["exercises/create_repo_and_push_code", "scripts", "terraform/scripts
 [processor.checker.suppressions]
 src_dirs = [".github", "config", "exercises/create_repo_and_push_code", "exercises/setting_up_virtual_machine", "scripts", "terraform/scripts"]
 src_files = [".yamllint.yaml", "README.md"]
+
+# ─── terraform ───────────────────────────────────────────────────────────────
+
+# every Terraform file parses and is formatted as `terraform fmt` formats it
+[processor.checker.script.terraform_fmt]
+command = "terraform"
+args = ["fmt", "-check", "-diff", "-no-color"]
+src_dirs = ["terraform"]
+src_extensions = [".tf", ".tfvars"]
