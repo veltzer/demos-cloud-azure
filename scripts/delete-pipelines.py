@@ -8,6 +8,7 @@ import json
 import subprocess
 import sys
 import time
+from typing import Any
 
 
 def ensure_devops_extension():
@@ -65,7 +66,7 @@ def list_pipelines(project):
         print(f"Error output: {e.stderr}")
         sys.exit(1)
 
-def list_pipeline_runs(pipeline_id, project):
+def list_pipeline_runs(pipeline_id, project) -> list[dict[str, Any]]:
     """List all runs for a specific pipeline."""
     try:
         result = subprocess.run(
@@ -73,12 +74,12 @@ def list_pipeline_runs(pipeline_id, project):
              '--project', project, '--output', 'json'],
             capture_output=True, text=True, check=True
         )
-
-        return json.loads(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Error listing pipeline runs: {e}")
         print(f"Error output: {e.stderr}")
         return []
+    runs: list[dict[str, Any]] = json.loads(result.stdout)
+    return runs
 
 def delete_pipeline_run(run_id, project):
     """Delete a specific pipeline run by ID."""
